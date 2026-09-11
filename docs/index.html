@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="OpenOS Cloud — OpenOS hesabınız, yayınladığınız uygulamalar ve bağlı cihazlarınız.">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'none';
+               script-src 'self';
+               style-src 'self';
+               img-src 'self' data: https://opencloud.m3sto-wolfly.workers.dev;
+               connect-src https://opencloud.m3sto-wolfly.workers.dev http://localhost:8787 http://127.0.0.1:8787;
+               font-src 'self';
+               base-uri 'none';
+               form-action 'none';
+               frame-ancestors 'none'">
+<title>OpenOS Cloud</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='none' stroke='%230a84ff' stroke-width='10'/><path d='M36 62L64 38' stroke='%2364d2ff' stroke-width='10' stroke-linecap='round'/></svg>">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="./">
+      <svg viewBox="0 0 100 100" width="26" height="26" aria-hidden="true">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="9"/>
+        <path d="M36 62L64 38" stroke="var(--accent)" stroke-width="9" stroke-linecap="round"/>
+      </svg>
+      <span>OpenOS <b>Cloud</b></span>
+    </a>
+    <nav class="topnav" id="topnav" hidden>
+      <button data-view="overview">Genel Bakış</button>
+      <button data-view="apps">Uygulamalarım</button>
+      <button data-view="devices">Cihazlar</button>
+      <button data-view="library">Kütüphane</button>
+      <button data-view="profile">Profil</button>
+      <button data-view="security">Güvenlik</button>
+    </nav>
+    <div class="topright">
+      <a class="ghost" href="https://github.com/m3sto/openos" rel="noopener">OpenOS</a>
+      <button class="ghost" id="themeBtn" type="button" title="Görünüm">◐</button>
+      <button class="ghost" id="signoutBtn" type="button" hidden>Çıkış</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- görünümler app.js tarafından çizilir -->
+  </main>
+
+  <footer class="foot">
+    <span>OpenOS Cloud · AGPL-3.0</span>
+    <span class="dot">·</span>
+    <a href="https://github.com/m3sto/openos-cloud" rel="noopener">Kaynak</a>
+    <span class="dot">·</span>
+    <a href="https://github.com/m3sto/openos-cloud/blob/main/SECURITY.md" rel="noopener">Güvenlik</a>
+    <span class="dot">·</span>
+    <span id="apiStatus" class="status">bağlanılıyor…</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

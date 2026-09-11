@@ -1,0 +1,19 @@
+name = "opencloud"
+main = "src/worker.js"
+compatibility_date = "2026-01-01"
+
+# --- D1 ---------------------------------------------------------------
+# wrangler d1 create openos-cloud   →  çıkan database_id'yi buraya yapıştırın
+[[d1_databases]]
+binding = "DB"
+database_name = "openos-cloud"
+database_id = "BURAYA_D1_ID"
+
+# --- Gizli olmayan ayarlar -------------------------------------------
+# CORS beyaz listesi. GitHub Pages panosu + OpenOS'un çalıştığı adresler.
+[vars]
+ALLOWED_ORIGINS = "https://m3sto.github.io,http://localhost:8080,http://127.0.0.1:8080"
+
+# --- Gizli değerler (ASLA bu dosyada durmaz) --------------------------
+#   wrangler secret put JWT_SECRET     # oturum/özet anahtarı
+#   wrangler secret put IP_PEPPER      # IP özetleme biberi

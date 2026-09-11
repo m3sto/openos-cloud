@@ -1,0 +1,27 @@
+name: Worker dağıt
+
+on:
+  push:
+    branches: [main]
+    paths: ['src/**', 'wrangler.toml', 'schema.sql']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      # CLOUDFLARE_API_TOKEN ve CLOUDFLARE_ACCOUNT_ID depo gizli değerleridir.
+      # Gizli değerler (JWT_SECRET, IP_PEPPER) `wrangler secret` ile bir kez
+      # ayarlanır ve bu iş akışı onlara dokunmaz.
+      - name: Dağıt
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
