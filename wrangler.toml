@@ -7,7 +7,7 @@ compatibility_date = "2026-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "openos-cloud"
-database_id = "BURAYA_D1_ID"
+database_id = "94cdc9c3-6d65-4f3d-8dd7-96b249fbc605"
 
 # --- Gizli olmayan ayarlar -------------------------------------------
 # CORS beyaz listesi. GitHub Pages panosu + OpenOS'un çalıştığı adresler.
