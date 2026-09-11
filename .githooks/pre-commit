@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# OpenOS Cloud — commit öncesi gizli değer bariyeri.
+# Etkinleştirmek için bir kez:  git config core.hooksPath .githooks
+set -euo pipefail
+
+PATTERNS='github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|xox[baprs]-[A-Za-z0-9-]{10,}'
+BLOCKED_FILES='^(\.dev\.vars|\.env|.*\.pem|.*\.key)$'
+
+fail=0
+while IFS= read -r f; do
+  [ -n "$f" ] || continue
+  if printf '%s' "$f" | grep -Eq "$BLOCKED_FILES"; then
+    echo "✗ $f commit edilemez (gizli değer dosyası)"; fail=1; continue
+  fi
+  [ -f "$f" ] || continue
+  if git show ":$f" 2>/dev/null | grep -Eq "$PATTERNS"; then
+    echo "✗ $f içinde gizli değer kalıbı var"; fail=1
+  fi
+done < <(git diff --cached --name-only --diff-filter=ACM)
+
+if [ "$fail" -ne 0 ]; then
+  echo
+  echo "Commit durduruldu. Gizli değerler yalnızca 'wrangler secret put' ile verilir."
+  echo "Zaten yayınlandıysa silmek yetmez — GitHub/Cloudflare üzerinden iptal edin."
+  exit 1
+fi
