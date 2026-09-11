@@ -16,6 +16,7 @@ Genel bir issue **açmayın**. GitHub'ın **Security → Report a vulnerability*
 | Konu | Karar |
 | --- | --- |
 | Şifre saklama | PBKDF2-SHA256, **310.000 tur**, 16 baytlık rastgele tuz. Biçim: `pbkdf2$<tur>$<tuz>$<özet>` |
+| Tur sınırı | Workers çalışma zamanı tek bir `deriveBits` çağrısında 100.000 turu aşmayı reddeder. Tur sayısını düşürmek yerine **zincir parçalara bölünür**: her parçanın çıktısı bir sonrakinin anahtar malzemesi olur. Toplam iş faktörü korunur, sonuç yine yalnızca (şifre, tuz, tur) ile belirlenir. Ölçülen maliyet: giriş/kayıt başına ~1,9 sn |
 | Şifre karşılaştırma | Sabit zamanlı (`timingSafeEqual`) — uzunluk bile sızmaz |
 | Kullanıcı yokken | Yine de bir PBKDF2 turu koşulur; giriş süresi kullanıcı varlığını ele vermez |
 | Şifre kuralı | En az 10 karakter, dört sınıftan en az üçü, yaygın kalıp taraması |

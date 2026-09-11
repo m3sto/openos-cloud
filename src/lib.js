@@ -101,12 +101,27 @@ export async function sha256(input) {
   return hex(await crypto.subtle.digest('SHA-256', typeof input === 'string' ? enc.encode(input) : input));
 }
 
-/** PBKDF2-SHA256. Depolanan biçim: pbkdf2$<iter>$<saltB64>$<hashB64> */
+/* Workers çalışma zamanı tek bir deriveBits çağrısında 100.000 turdan
+   fazlasını reddeder. İstenen tur sayısını düşürmek yerine zinciri parçalara
+   böleriz: her parçanın çıktısı bir sonrakinin anahtar malzemesi olur, böylece
+   toplam iş faktörü korunur ve sonuç yine yalnızca (şifre, tuz, tur) ile
+   belirlenir — doğrulama birebir aynı yoldan geçer. */
+const PBKDF2_CHUNK = 100_000;
+
+/** PBKDF2-SHA256, zincirlenmiş. Depolanan biçim: pbkdf2$<iter>$<saltB64>$<hashB64> */
 export async function hashPassword(password, iterations = LIMITS.pbkdf2, saltBytes) {
   const salt = saltBytes || randomBytes(16);
-  const key = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
-  const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' }, key, 256);
+  let material = enc.encode(password);
+  let bits = null;
+  let remaining = Math.max(1, iterations);
+  while (remaining > 0) {
+    const rounds = Math.min(PBKDF2_CHUNK, remaining);
+    const key = await crypto.subtle.importKey('raw', material, 'PBKDF2', false, ['deriveBits']);
+    bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt, iterations: rounds, hash: 'SHA-256' }, key, 256);
+    material = new Uint8Array(bits);
+    remaining -= rounds;
+  }
   return `pbkdf2$${iterations}$${b64(salt)}$${b64(bits)}`;
 }
 
