@@ -30,7 +30,7 @@ export const LIMITS = {
 
 export const RATE = {
   'auth:login':   { limit: 8,   window: 300 },   // 5 dk'da 8 deneme
-  'auth:signup':  { limit: 4,   window: 3600 },
+  'auth:signup':  { limit: 6,   window: 3600 },
   'auth:password':{ limit: 5,   window: 3600 },
   'apps:publish': { limit: 30,  window: 3600 },
   'avatar:put':   { limit: 12,  window: 3600 },

@@ -222,17 +222,22 @@ async function dispatch(seg, request, env, url, ip, ctx) {
 
 /* ====================================================================== */
 async function signup(request, env, ip) {
-  await rateLimit(env, 'auth:signup', ip);
   const body = await readJson(request);
   const email = String(body.email || '').trim().toLowerCase();
   const handle = String(body.handle || '').trim().toLowerCase();
 
+  /* Biçim denetimi oran sınırından ÖNCE gelir. Aksi hâlde zayıf şifre yazan
+     kullanıcı, hiç hesap oluşturmamış olmasına rağmen saatlik hakkını yakar
+     ve bir saat kilitli kalır. Sınır, gerçek hesap oluşturma denemelerini
+     kısıtlamak içindir; biçimsiz istekleri genel IP sınırı zaten karşılar. */
   if (!isEmail(email)) fail('bad_email', 'Geçerli bir e-posta girin');
   if (!isHandle(handle)) fail('bad_handle',
     `Kullanıcı adı ${LIMITS.handleMin}-${LIMITS.handleMax} karakter olmalı; küçük harf, rakam, - ve _ kullanın`);
   const problem = passwordProblem(body.password);
   if (problem) fail('weak_password', problem);
   if (RESERVED.has(handle)) fail('handle_taken', 'Bu kullanıcı adı ayrılmış');
+
+  await rateLimit(env, 'auth:signup', ip);
 
   const exists = await env.DB.prepare('SELECT 1 FROM users WHERE email = ? OR handle = ?')
     .bind(email, handle).first();
